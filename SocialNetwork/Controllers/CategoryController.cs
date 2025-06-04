@@ -41,7 +41,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);
