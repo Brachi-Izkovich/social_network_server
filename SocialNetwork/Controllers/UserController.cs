@@ -22,13 +22,10 @@ namespace SocialNetwork.Controllers
     {
         private readonly IService<UserDto> service;
         private readonly IAuthService authService;
-        //private object authService;
-
-        //private readonly IConfiguration config;
-        public UserController(IService<UserDto> service, IConfiguration config)
+        public UserController(IService<UserDto> service, IAuthService authService)
         {
             this.service = service;
-            //this.config = config;
+            this.authService = authService;
         }
         // GET: api/<UserController>
         [HttpGet]
@@ -78,7 +75,7 @@ namespace SocialNetwork.Controllers
         }
 
 
-        [Authorize()]
+        [Authorize]
         [HttpGet("GetUserByToken")]
         public async Task<UserDto> GetUserByToken()
         {

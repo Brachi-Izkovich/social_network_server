@@ -22,8 +22,10 @@ namespace Service.Services
             services.AddScoped<IService<MessageDto>, MessageService>();
             services.AddScoped<IService<TopicDto>, TopicService>();
             services.AddScoped<IService<CategoryDto>, CategoryService>();
-
-            services.AddAutoMapper(typeof(MyMapper));//הגדרת התלויות....
+            //הגדרת התלויות....
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ILoginService, UserService>();
+            services.AddAutoMapper(typeof(MyMapper));
             return services;
         }
     }
