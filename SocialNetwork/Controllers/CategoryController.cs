@@ -22,6 +22,7 @@ namespace SocialNetwork.Controllers
         }
         // GET: api/<CategoryController>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<List<CategoryDto>> Get()
         {
             return await service.GetAll();
@@ -29,6 +30,7 @@ namespace SocialNetwork.Controllers
 
         // GET api/<CategoryController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<CategoryDto> Get(int id)
         {
             return await service.GetById(id);
@@ -41,7 +43,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Veteran")]
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);
@@ -49,7 +51,7 @@ namespace SocialNetwork.Controllers
 
         // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task Put(int id, [FromBody] CategoryDto category)
         {
             await service.Update(id, category);
@@ -57,7 +59,7 @@ namespace SocialNetwork.Controllers
 
         // DELETE api/<CategoryController>/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task Delete(int id)
         {
             await service.Delete(id);

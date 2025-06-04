@@ -29,6 +29,7 @@ namespace SocialNetwork.Controllers
         }
         // GET: api/<UserController>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<List<UserDto>> Get()
         {
             return await service.GetAll();
@@ -36,6 +37,7 @@ namespace SocialNetwork.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<UserDto> Get(int id)
         {
             return await service.GetById(id);
@@ -43,23 +45,12 @@ namespace SocialNetwork.Controllers
 
         // POST api/<UserController>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<UserDto> Post([FromForm] UserDto user)
         {
             UploadImage(user.fileImageProfile);
             return await service.Add(user);
         }
-
-        //[HttpPost("login")]
-        //public string Login([FromForm] UserLogin value)
-        //{
-        //    var user = AuthenticateAsync(value); 
-        //    if (user != null)
-        //    {
-        //        var token = GenerateTokenAsync(user);
-        //        return token;
-        //    }
-        //    return "user not found";
-        //}
 
         [HttpPost("login")]
         [AllowAnonymous]
@@ -106,6 +97,7 @@ namespace SocialNetwork.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task Put(int id, [FromForm] UserDto user)
         {
             UploadImage(user.fileImageProfile);
@@ -114,6 +106,7 @@ namespace SocialNetwork.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]//הערה: באמת צריך לאפשר לכל משתמש למחוק רק את עצמו חוץ מהמנהל שיכול למחוק את כולם
         public async Task Delete(int id)
         {
             await service.Delete(id);
