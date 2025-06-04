@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Service.Interfaces
 {
-    public interface IAuthService
+    public interface IAuthService//security
     {
         Task<string> GenerateTokenAsync(UserDto user);
         Task<UserDto> AuthenticateAsync(UserLogin userLogin);

@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Common.Dto;
 using Service.Interfaces;
+using Service.Services;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Text; // ?
+using System.Text;
+using Microsoft.AspNetCore.Authorization; // ?
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,6 +21,9 @@ namespace SocialNetwork.Controllers
     public class UserController : ControllerBase
     {
         private readonly IService<UserDto> service;
+        private readonly IAuthService authService;
+        //private object authService;
+
         //private readonly IConfiguration config;
         public UserController(IService<UserDto> service, IConfiguration config)
         {
@@ -47,37 +52,60 @@ namespace SocialNetwork.Controllers
             return await service.Add(user);
         }
 
-        //[HttpPost("{id}")]
-        //public string Login([FromForm] UserLogin user)
+        //[HttpPost("login")]
+        //public string Login([FromForm] UserLogin value)
         //{
-        //    var testUser = Authenticate(user);
-        //    var token = Generate(testUser);
-        //    return token;
+        //    var user = AuthenticateAsync(value); 
+        //    if (user != null)
+        //    {
+        //        var token = GenerateTokenAsync(user);
+        //        return token;
+        //    }
+        //    return "user not found";
         //}
-        //private async Task<UserDto> Authenticate(UserLogin user)
-        //{
-        //    UserDto returnUser = await service.GetAll().FirstOrDefault(x => x.Password == user.Password && x.Name == user.UserName);
-        //    if (returnUser != null)
-        //        return returnUser;
-        //    return null;
-        //}
-        //private string Generate(UserDto user)
-        //{
-        //    var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
-        //    var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
-        //    var claims = new[] {
-        //        new Claim(ClaimTypes.NameIdentifier,user.Name),
-        //        new Claim(ClaimTypes.Email,user.Email),
-        //        //new Claim(ClaimTypes.Name,user.Name),
-        //        ///new Claim(ClaimTypes.Role,user.Role),
-        //        //new Claim(ClaimTypes.GivenName,user.Name)
-        //        };
-        //    var token = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"],
-        //        claims,
-        //        expires: DateTime.Now.AddMinutes(15),
-        //        signingCredentials: credentials);
-        //    return new JwtSecurityTokenHandler().WriteToken(token);
-        //}
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromForm] UserLogin value)
+        {
+            var user = await authService.AuthenticateAsync(value);
+            if (user != null)
+            {
+                var token = await authService.GenerateTokenAsync(user);
+                return Ok(token);
+            }
+            return Unauthorized("User not found");
+        }
+
+
+        [Authorize()]
+        [HttpGet("GetUserByToken")]
+        public async Task<UserDto> GetUserByToken()
+        {
+            UserDto user = GetCurrentUser();
+
+            return user;
+        }
+
+        private UserDto GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                var UserClaim = identity.Claims;
+                return new UserDto()
+                {
+                    Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
+                    Role = (Role)Enum.Parse(typeof(Role), UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value),
+                    Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value
+                    // GivenName = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
+                    // SurName = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value
+                };
+
+            }
+            return null;
+        }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]

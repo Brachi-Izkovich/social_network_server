@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Service.Interfaces
 {
-    internal interface ILoginService : IService<UserDto>
+    public interface ILoginService : IService<UserDto>
     {
         Task<UserDto?> GetByUsernameAndPasswordAsync(string username, string password);
     }

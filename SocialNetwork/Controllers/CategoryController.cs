@@ -41,7 +41,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-       //[Authorize]
+        [Authorize(Roles = "Manager")]
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);
@@ -49,6 +49,7 @@ namespace SocialNetwork.Controllers
 
         // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task Put(int id, [FromBody] CategoryDto category)
         {
             await service.Update(id, category);
@@ -56,6 +57,7 @@ namespace SocialNetwork.Controllers
 
         // DELETE api/<CategoryController>/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task Delete(int id)
         {
             await service.Delete(id);
