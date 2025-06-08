@@ -29,7 +29,7 @@ namespace SocialNetwork.Controllers
         }
         // GET: api/<UserController>
         [HttpGet]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<List<UserDto>> Get()
         {
             return await service.GetAll();
@@ -37,7 +37,7 @@ namespace SocialNetwork.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager")]
         public async Task<UserDto> Get(int id)
         {
             return await service.GetById(id);
@@ -45,15 +45,23 @@ namespace SocialNetwork.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<UserDto> Post([FromForm] UserDto user)
         {
+            //try
+            //{
+            //    UploadImage(user.fileImageProfile);
+            //}
+            //catch (IOException ex)
+            //{
+            //    return StatusCode(500, "בעיה בהעלאת הקובץ: " + ex.Message);
+            //}
             UploadImage(user.fileImageProfile);
             return await service.Add(user);
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] UserLogin value)
         {
             var user = await authService.AuthenticateAsync(value);

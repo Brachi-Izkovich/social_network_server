@@ -22,7 +22,7 @@ namespace SocialNetwork.Controllers
         }
         // GET: api/<CategoryController>
         [HttpGet]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<List<CategoryDto>> Get()
         {
             return await service.GetAll();
@@ -43,7 +43,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-        [Authorize(Roles = "Admin, Veteran")]
+        [Authorize(Roles = "Manager, Veteran")]
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);
