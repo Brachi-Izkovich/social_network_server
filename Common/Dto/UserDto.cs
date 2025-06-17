@@ -10,7 +10,7 @@ namespace Common.Dto
 {
     public enum Role
     {
-        New,Veteran,Manager 
+        New,Veteran,Admin 
     }
     public class UserDto
     {

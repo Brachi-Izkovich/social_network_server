@@ -22,7 +22,6 @@ namespace SocialNetwork.Controllers
         }
         // GET: api/<CategoryController>
         [HttpGet]
-        //[AllowAnonymous]
         public async Task<List<CategoryDto>> Get()
         {
             return await service.GetAll();
@@ -30,7 +29,7 @@ namespace SocialNetwork.Controllers
 
         // GET api/<CategoryController>/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize]
         public async Task<CategoryDto> Get(int id)
         {
             return await service.GetById(id);
@@ -43,7 +42,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-        [Authorize(Roles = "Manager, Veteran")]
+        [Authorize]//who has a token can create a new category 
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);
@@ -52,7 +51,7 @@ namespace SocialNetwork.Controllers
         // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task Put(int id, [FromBody] CategoryDto category)
+        public async Task Put(int id, [FromForm] CategoryDto category)
         {
             await service.Update(id, category);
         }

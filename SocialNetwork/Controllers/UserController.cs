@@ -37,7 +37,7 @@ namespace SocialNetwork.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public async Task<UserDto> Get(int id)
         {
             return await service.GetById(id);

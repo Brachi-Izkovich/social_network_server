@@ -12,7 +12,7 @@ using Mock;
 namespace Mock.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20250603141052_init")]
+    [Migration("20250617201304_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -109,9 +109,6 @@ namespace Mock.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -122,8 +119,6 @@ namespace Mock.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CategoryId1");
 
                     b.HasIndex("UserId");
 
@@ -174,8 +169,7 @@ namespace Mock.Migrations
 
                     b.HasOne("Repository.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Message");
 
@@ -192,8 +186,7 @@ namespace Mock.Migrations
 
                     b.HasOne("Repository.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Topic");
 
@@ -203,18 +196,12 @@ namespace Mock.Migrations
             modelBuilder.Entity("Repository.Entities.Topic", b =>
                 {
                     b.HasOne("Repository.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Repository.Entities.Category", null)
                         .WithMany("Topics")
-                        .HasForeignKey("CategoryId1");
+                        .HasForeignKey("CategoryId");
 
                     b.HasOne("Repository.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
 

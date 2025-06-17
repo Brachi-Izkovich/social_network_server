@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.Threading.Tasks;
@@ -17,12 +18,12 @@ namespace SocialNetwork.Controllers
             this.service = service;
         }
         // GET: api/<FeedbackController>
+        
         [HttpGet]
         public async Task<List<FeedbackDto>> Get()
         {
             return await service.GetAll();
         }
-
         // GET api/<FeedbackController>/5
         [HttpGet("{id}")]
         public async Task<FeedbackDto> Get(int id)
@@ -46,6 +47,7 @@ namespace SocialNetwork.Controllers
 
         // DELETE api/<FeedbackController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles= "Admin")]
         public async Task Delete(int id)
         {
             await service.Delete(id);
