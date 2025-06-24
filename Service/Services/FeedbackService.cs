@@ -16,12 +16,12 @@ namespace Service.Services
     {
         private readonly IRepository<Feedback> repository;
         private readonly IMapper mapper;
-        private readonly IExtention extention;
-        public FeedbackService(IRepository<Feedback> repository, IMapper mapper, IExtention extention)
+        //private readonly IExtention extention;
+        public FeedbackService(IRepository<Feedback> repository, IMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
-            this.extention = extention;
+            //this.extention = extention;
         }
         public async Task<FeedbackDto> Add(FeedbackDto user)
         {

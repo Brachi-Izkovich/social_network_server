@@ -46,23 +46,6 @@ namespace SocialNetwork.Controllers
         // PUT api/<FeedbackController>/5
         [HttpPut("{id}")]
         [Authorize]
-        //public async Task<IActionResult> Put(int id, [FromForm] FeedbackDto feedback)
-        //{
-        //    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-        //           ?? User.FindFirst("userId")?.Value;
-
-        //    if (userIdClaim == null)
-        //        return Unauthorized(); //no correctly token
-        //    var userId = int.Parse(userIdClaim);
-
-        //    var isOwner = await owner.IsOwner(id, userId);
-
-        //    if (!isOwner)
-        //        return Forbid(); // המשתמש לא מורשה לשנות
-
-        //    await service.Update(id, feedback);
-        //    return Ok();
-        //}
         public async Task<IActionResult> Put(int id, [FromForm] FeedbackDto feedback)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -79,6 +62,7 @@ namespace SocialNetwork.Controllers
             return Ok();
         }
 
+        // להוסיף את האפשרות של מחיקה למשתמש שהגיב את הפידבק
         // DELETE api/<FeedbackController>/5
         [HttpDelete("{id}")]
         [Authorize(Roles= "Admin")]

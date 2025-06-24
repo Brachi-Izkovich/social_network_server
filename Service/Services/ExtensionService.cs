@@ -23,7 +23,6 @@ namespace Service.Services
             services.AddScoped<IService<TopicDto>, TopicService>();
             services.AddScoped<IService<CategoryDto>, CategoryService>();
             //הגדרת התלויות....
-            services.AddScoped<IExtention, FeedbackRepository>();
             services.AddScoped<IOwner, FeedbackService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ILoginService, UserService>();

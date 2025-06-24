@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.Threading.Tasks;
@@ -32,11 +33,13 @@ namespace SocialNetwork.Controllers
 
         // POST api/<TopicController>
         [HttpPost]
+        [Authorize]
         public async Task<TopicDto> Post([FromBody] TopicDto topic)
         {
             return await service.Add(topic);
         }
 
+        // להוסיף את הפונקציה ()*&^%$#@!
         // PUT api/<TopicController>/5
         [HttpPut("{id}")]
         public async Task Put(int id, [FromBody] TopicDto topic)
@@ -44,6 +47,7 @@ namespace SocialNetwork.Controllers
             await service.Update(id, topic);
         }
 
+        // להוסיף את הפונקציה ()*&^%$#@!
         // DELETE api/<TopicController>/5
         [HttpDelete("{id}")]
         public async Task Delete(int id)

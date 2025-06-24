@@ -37,7 +37,6 @@ namespace SocialNetwork.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<UserDto> Get(int id)
         {
             return await service.GetById(id);
@@ -45,17 +44,8 @@ namespace SocialNetwork.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        //[AllowAnonymous]
         public async Task<UserDto> Post([FromForm] UserDto user)
         {
-            //try
-            //{
-            //    UploadImage(user.fileImageProfile);
-            //}
-            //catch (IOException ex)
-            //{
-            //    return StatusCode(500, "בעיה בהעלאת הקובץ: " + ex.Message);
-            //}
             UploadImage(user.fileImageProfile);
             return await service.Add(user);
         }
@@ -73,12 +63,11 @@ namespace SocialNetwork.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetUserByToken")]
         public async Task<UserDto> GetUserByToken()
         {
             UserDto user = GetCurrentUser();
-
             return user;
         }
         private int GetCurrentUserId()
@@ -110,6 +99,7 @@ namespace SocialNetwork.Controllers
             return null;
         }
 
+        // להוסיף את הפונקציה ()*&^%$#@!
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
         [Authorize]
@@ -119,6 +109,7 @@ namespace SocialNetwork.Controllers
             await service.Update(id, user);
         }
 
+        // להוסיף את הפונקציה ()*&^%$#@! גם מנהל יכול
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]//הערה: באמת צריך לאפשר לכל משתמש למחוק רק את עצמו חוץ מהמנהל שיכול למחוק את כולם

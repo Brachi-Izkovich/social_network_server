@@ -29,7 +29,6 @@ namespace SocialNetwork.Controllers
 
         // GET api/<CategoryController>/5
         [HttpGet("{id}")]
-        //[Authorize]
         public async Task<CategoryDto> Get(int id)
         {
             return await service.GetById(id);
@@ -42,7 +41,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
-        [Authorize]//who has a token can create a new category 
+        [Authorize(Roles = "Admin")]//who has a token can create a new category 
         public Task<CategoryDto> Post([FromForm] CategoryDto category)
         {
             return service.Add(category);

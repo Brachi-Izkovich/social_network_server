@@ -40,6 +40,7 @@ namespace SocialNetwork.Controllers
             return await service.Add(message);
         }
 
+        // להוסיף את הפונקציה ()*&^%$#@!
         // PUT api/<MessageController>/5
         [HttpPut("{id}")]
         [Authorize]
@@ -70,7 +71,7 @@ namespace SocialNetwork.Controllers
         //    return NoContent();
         //}
 
-        //כנל כמו פוט בהרשאות
+        // להוסיף את הפונקציה ()*&^%$#@!
         // DELETE api/<MessageController>/5
         [HttpDelete("{id}")]
         public async Task Delete(int id)
