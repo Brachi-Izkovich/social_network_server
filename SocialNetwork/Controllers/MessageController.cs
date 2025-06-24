@@ -14,9 +14,11 @@ namespace SocialNetwork.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IService<MessageDto> service;
-        public MessageController(IService<MessageDto> service)
+        private readonly IOwner owner;
+        public MessageController(IService<MessageDto> service, IOwner owner)
         {
             this.service = service;
+            this.owner = owner;
         }
         // GET: api/<MessageController>
         [HttpGet]
@@ -42,41 +44,43 @@ namespace SocialNetwork.Controllers
 
         // להוסיף את הפונקציה ()*&^%$#@!
         // PUT api/<MessageController>/5
-        [HttpPut("{id}")]
+        [HttpPut("{messageId}")]
         [Authorize]
-        public async Task Put(int id, [FromBody] MessageDto message)
+        public async Task<IActionResult> Put(int messageId, [FromForm] MessageDto message)
         {
-            //צריך לתת הרשאה רק למנהל או למי שכתב את ההודעה בעזרת הפונקציה שמיורקת מתחת 
-            //var userId = User.FindFirst("sub")?.Value;// או ClaimTypes.NameIdentifier
-            await service.Update(id, message);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(messageId, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // המשתמש לא מורשה לשנות
+
+            await service.Update(messageId, message);
+            return Ok();
         }
 
 
-        //[HttpPut("{id}")]
-        //[Authorize] // שימי לב – לא Roles, כדי לאפשר גם ליוצר ההודעה
-        //public async Task<IActionResult> Put(int id, [FromBody] MessageDto message)
-        //{
-        //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        //    if (userId == null)
-        //        return Forbid();
-
-        //    var isAdmin = User.IsInRole("Admin");
-        //    var messageOwnerId = await service.GetMessageOwnerId(id);
-
-        //    if (userId != messageOwnerId && !isAdmin)
-        //        return Forbid();
-
-        //    await service.Update(id, message);
-        //    return NoContent();
-        //}
-
-        // להוסיף את הפונקציה ()*&^%$#@!
-        // DELETE api/<MessageController>/5
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        // DELETE api/<FeedbackController>/5
+        [HttpDelete("{messageId}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int messageId)
         {
-            await service.Delete(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(messageId, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't delete
+
+            await service.Delete(messageId);
+            return Ok();
         }
     }
 }

@@ -22,10 +22,12 @@ namespace SocialNetwork.Controllers
     {
         private readonly IService<UserDto> service;
         private readonly IAuthService authService;
-        public UserController(IService<UserDto> service, IAuthService authService)
+        private readonly IOwner owner;
+        public UserController(IService<UserDto> service, IAuthService authService, IOwner owner)
         {
             this.service = service;
             this.authService = authService;
+            this.owner = owner;
         }
         // GET: api/<UserController>
         [HttpGet]
@@ -99,23 +101,44 @@ namespace SocialNetwork.Controllers
             return null;
         }
 
-        // להוסיף את הפונקציה ()*&^%$#@!
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
+
+        // PUT api/<FeedbackController>/5
+        [HttpPut("{userId}")]
         [Authorize]
-        public async Task Put(int id, [FromForm] UserDto user)
+        public async Task<IActionResult> Put(int userId, [FromForm] UserDto user)
         {
-            UploadImage(user.fileImageProfile);
-            await service.Update(id, user);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userIdfromClaim = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(userId, userIdfromClaim);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't update
+
+            await service.Update(userId, user);
+            return Ok();
         }
 
-        // להוסיף את הפונקציה ()*&^%$#@! גם מנהל יכול
-        // DELETE api/<UserController>/5
+
+        // DELETE api/<FeedbackController>/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]//הערה: באמת צריך לאפשר לכל משתמש למחוק רק את עצמו חוץ מהמנהל שיכול למחוק את כולם
-        public async Task Delete(int id)
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(id, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't delete
+
             await service.Delete(id);
+            return Ok();
         }
 
         private void UploadImage(IFormFile file)

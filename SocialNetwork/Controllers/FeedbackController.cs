@@ -1,6 +1,7 @@
 ﻿using Common.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Entities;
 using Service.Interfaces;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -42,33 +43,45 @@ namespace SocialNetwork.Controllers
         {
             return await service.Add(feedback);
         }
-
+        
         // PUT api/<FeedbackController>/5
-        [HttpPut("{id}")]
+        [HttpPut("{feedbackId}")]
         [Authorize]
-        public async Task<IActionResult> Put(int id, [FromForm] FeedbackDto feedback)
+
+        public async Task<IActionResult> Put(int feedbackId, [FromForm] FeedbackDto feedback)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null)
                 return Unauthorized();
             int userId = int.Parse(userIdClaim);
 
-            var isOwner = await owner.IsOwner(id, userId);
+            var isOwner = await owner.IsOwner(feedbackId, userId);
 
-            if (!isOwner)
-                return Forbid(); // המשתמש לא מורשה לשנות
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't update
 
-            await service.Update(id, feedback);
+            await service.Update(feedbackId, feedback);
             return Ok();
         }
 
         // להוסיף את האפשרות של מחיקה למשתמש שהגיב את הפידבק
         // DELETE api/<FeedbackController>/5
-        [HttpDelete("{id}")]
-        [Authorize(Roles= "Admin")]
-        public async Task Delete(int id)
+        [HttpDelete("{feedbackId}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int feedbackId)
         {
-            await service.Delete(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(feedbackId, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't delete
+
+            await service.Delete(feedbackId);
+            return Ok();
         }
 
 
@@ -78,9 +91,10 @@ namespace SocialNetwork.Controllers
         {
             var nameClaim = User.FindFirst(ClaimTypes.Name)?.Value;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userRoleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
             if (userIdClaim == null)
                 return Unauthorized();
-            return Ok(new { nameClaim, userIdClaim });
+            return Ok(new { nameClaim, userIdClaim,userRoleClaim });
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,9 +14,11 @@ namespace SocialNetwork.Controllers
     public class TopicController : ControllerBase
     {
         private readonly IService<TopicDto> service;
-        public TopicController(IService<TopicDto> service)
+        private readonly IOwner owner;
+        public TopicController(IService<TopicDto> service, IOwner owner)
         {
             this.service = service;
+            this.owner = owner;
         }
         // GET: api/<TopicController>
         [HttpGet]
@@ -39,20 +42,44 @@ namespace SocialNetwork.Controllers
             return await service.Add(topic);
         }
 
-        // להוסיף את הפונקציה ()*&^%$#@!
-        // PUT api/<TopicController>/5
-        [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] TopicDto topic)
+
+        // PUT api/<FeedbackController>/5
+        [HttpPut("{topicId}")]
+        [Authorize]
+        public async Task<IActionResult> Put(int topicId, [FromForm] TopicDto topic)
         {
-            await service.Update(id, topic);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(topicId, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't update
+
+            await service.Update(topicId, topic);
+            return Ok();
         }
 
-        // להוסיף את הפונקציה ()*&^%$#@!
-        // DELETE api/<TopicController>/5
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+
+        // DELETE api/<FeedbackController>/5
+        [HttpDelete("{topicId}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int topicId)
         {
-            await service.Delete(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
+            int userId = int.Parse(userIdClaim);
+
+            var isOwner = await owner.IsOwner(topicId, userId);
+
+            if (!isOwner && !User.IsInRole("Admin"))
+                return Forbid(); // user can't delete
+
+            await service.Delete(topicId);
+            return Ok();
         }
     }
 }

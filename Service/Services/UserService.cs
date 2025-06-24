@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class UserService : ILoginService
+    public class UserService : ILoginService,IOwner
     {
         private readonly IRepository<User> repository;
         private readonly IMapper mapper;
@@ -53,6 +53,11 @@ namespace Service.Services
             return user == null ? null : mapper.Map<UserDto>(user);
         }
 
+        public async Task<bool> IsOwner(int userIdToChange, int userId)
+        {
+            var user = await repository.GetById(userIdToChange);
+            return user != null && user.Id == userId;
+        }
 
         public async Task Update(int id, UserDto item)
         {

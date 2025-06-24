@@ -8,6 +8,6 @@ namespace Service.Interfaces
 {
     public interface IOwner
     {
-        Task<bool> IsOwner(int feedbackId, int userId);
+        Task<bool> IsOwner(int itemId, int userId);
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class MessageService : IService<MessageDto>
+    public class MessageService : IService<MessageDto>,IOwner
     {
         private readonly IRepository<Message> repository;
         private readonly IMapper mapper;
@@ -38,6 +38,12 @@ namespace Service.Services
         public async Task<MessageDto> GetById(int id)
         {
             return mapper.Map<MessageDto>(await repository.GetById(id));
+        }
+
+        public async Task<bool> IsOwner(int messageId, int userId)
+        {
+            var message = await repository.GetById(messageId);
+            return message != null && message.UserId == userId;
         }
 
         public async Task Update(int id, MessageDto item)
