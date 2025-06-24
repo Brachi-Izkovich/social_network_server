@@ -35,7 +35,7 @@ namespace SocialNetwork.Controllers
         // POST api/<MessageController>
         [HttpPost]
         [Authorize]
-        public async Task<MessageDto> Post([FromBody] MessageDto message)
+        public async Task<MessageDto> Post([FromForm] MessageDto message)
         {
             return await service.Add(message);
         }

@@ -38,6 +38,15 @@ namespace Repository.Repositories
         {
             return await context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
         }
+        //public async Task<User> GetUserFeedbackById(int feedbackId)
+        //{
+        //    //get feedback_id
+        //    //look after feedback that its id equal to feedbackId
+        //    //continue look after user that its id equal to feedback->userid
+        //    Feedback feedback = await context.Feedbacks.FirstOrDefaultAsync(x => x.Id == feedbackId);
+        //    User user = await context.Users.FirstOrDefaultAsync(x => x.Id == feedback.UserId);
+        //    return user;
+        //}
 
         public async Task Update(int id, Feedback item)
         {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Microsoft.EntityFrameworkCore;
 using Repository.Entities;
 using Repository.Interfaces;
 using Service.Interfaces;

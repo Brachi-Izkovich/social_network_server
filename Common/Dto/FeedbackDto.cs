@@ -12,7 +12,8 @@ namespace Common.Dto
     public class FeedbackDto
     {
         public Imoje Type { get; set; }
-        public int? UserId { get; set; }
+        //need to remove, and get it at the site(atar)
+        public int UserId { get; set; }
         public int MessageId { get; set; }
     }
 }

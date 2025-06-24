@@ -35,6 +35,12 @@ namespace Service.Services
             return mapper.Map<List<UserDto>>(await repository.GetAll());
         }
 
+        public async Task<User> GetByEmail(string email)
+        {
+            var all = await repository.GetAll(); // מחזיר IEnumerable<User>
+            return all.FirstOrDefault(u => u.Email == email);
+        }
+
         public async Task<UserDto> GetById(int id)
         {
             return mapper.Map<UserDto>(await repository.GetById(id));
@@ -46,6 +52,7 @@ namespace Service.Services
             var user = users.FirstOrDefault(u => u.Name == username && u.Password == password);
             return user == null ? null : mapper.Map<UserDto>(user);
         }
+
 
         public async Task Update(int id, UserDto item)
         {

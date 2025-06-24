@@ -61,10 +61,9 @@ namespace SocialNetwork.Controllers
         }
 
         [HttpPost("login")]
-        //[AllowAnonymous]
-        public async Task<IActionResult> Login([FromForm] UserLogin value)
+        public async Task<IActionResult> Login([FromForm] UserLogin userLogin)
         {
-            var user = await authService.AuthenticateAsync(value);
+            var user = await authService.AuthenticateAsync(userLogin);
             if (user != null)
             {
                 var token = await authService.GenerateTokenAsync(user);
@@ -82,7 +81,17 @@ namespace SocialNetwork.Controllers
 
             return user;
         }
-
+        private int GetCurrentUserId()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                var userIdClaim = identity.FindFirst("userId");
+                if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int id))
+                    return id;
+            }
+            throw new Exception("User ID not found in token");
+        }
         private UserDto GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -94,9 +103,7 @@ namespace SocialNetwork.Controllers
                     Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
                     Role = (Role)Enum.Parse(typeof(Role), UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value),
-                    Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value
-                    // GivenName = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
-                    // SurName = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value
+                    Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value,
                 };
 
             }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Microsoft.EntityFrameworkCore;
 using Repository.Entities;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -11,14 +12,16 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class FeedbackService : IService<FeedbackDto>
+    public class FeedbackService : IService<FeedbackDto>,IOwner
     {
         private readonly IRepository<Feedback> repository;
         private readonly IMapper mapper;
-        public FeedbackService(IRepository<Feedback> repository, IMapper mapper)
+        private readonly IExtention extention;
+        public FeedbackService(IRepository<Feedback> repository, IMapper mapper, IExtention extention)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.extention = extention;
         }
         public async Task<FeedbackDto> Add(FeedbackDto user)
         {
@@ -40,6 +43,11 @@ namespace Service.Services
             return mapper.Map<FeedbackDto>(await repository.GetById(id));
         }
 
+        public async Task<bool> IsOwner(int feedbackId, int userId)
+        {
+            var feedback = await repository.GetById(feedbackId);
+            return feedback != null && feedback.UserId == userId;
+        }
         public async Task Update(int id, FeedbackDto item)
         {
             await repository.Update(id, mapper.Map<Feedback>(item));

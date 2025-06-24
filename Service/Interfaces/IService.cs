@@ -14,4 +14,4 @@ namespace Service.Interfaces
         Task Update(int id, T item);
         Task Delete(int id);
     }
-}
+} 

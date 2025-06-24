@@ -11,7 +11,8 @@ namespace Mock
 {
     public class Database : DbContext, IContext
     {
-        //home = DESKTOP-FKDF8KP\SQLSERVR
+        //miri = DESKTOP-FKDF8KP\SQLSERVR
+        //brachi = brachi = BRACHIH-COMPUTE\SQLDATABASE
         //seminar = sql
         public DbSet<User> Users { get; set; }
         public DbSet<Topic> Topics { get; set; }
