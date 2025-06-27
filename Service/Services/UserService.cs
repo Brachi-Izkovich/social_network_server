@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class UserService : ILoginService,IOwner
+    public class UserService : IService<UserDto>, ILoginService,IOwner
     {
         private readonly IRepository<User> repository;
         private readonly IMapper mapper;
