@@ -46,14 +46,58 @@ namespace SocialNetwork.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<UserDto> Post([FromForm] UserDto user)
+        public async Task<IActionResult> Post([FromForm] UserDto user)
         {
+            // Validation
+            
+            if (string.IsNullOrWhiteSpace(user.Email))
+            {
+                return BadRequest("Email is required and cannot be empty.");
+            }
+
+            if (!user.Email.EndsWith("@gmail.com"))
+            {
+                return BadRequest("Email must end with '@gmail.com'.");
+            }
+
+            if (user.Email.Contains(" "))
+            {
+                return BadRequest("Email cannot contain spaces.");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Password))
+            {
+                return BadRequest("Password is required and cannot be empty.");
+            }
+
+            if (user.Password.Length < 6)
+            {
+                return BadRequest("Password must be at least 6 characters long.");
+            }
+
+            if (!user.Password.Any(char.IsLetter))
+            {
+                return BadRequest("Password must contain at least one letter.");
+            }
+
+            if (!user.Password.Any(char.IsDigit))
+            {
+                return BadRequest("Password must contain at least one number.");
+            }
+
+            if (user.Password.Contains(" "))
+            {
+                return BadRequest("Password cannot contain spaces.");
+            }
+            
+            // Image
+
             if (user.fileImageProfile != null)
             {
                 UploadImage(user.fileImageProfile);
                 user.ImageProfileUrl = user.fileImageProfile.FileName;
             }
-            return await service.Add(user);
+            return Ok(await service.Add(user));
         }
 
         [HttpPost("login")]
