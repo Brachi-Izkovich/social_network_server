@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Common.Dto
 {
-    public enum Role
-    {
-        New,Veteran,Admin 
-    }
+    //public enum Role
+    //{
+    //    New,Veteran,Admin 
+    //}
     public class UserDto
     {
         //public int Id { get; set; }
@@ -22,6 +22,6 @@ namespace Common.Dto
         public byte[]? ArrImageProfile { get; set; }
         public IFormFile? fileImageProfile { get; set; }
         public string? ImageProfileUrl { get; set; } // זה מחזיר את שם קובץ התמונה שנשמר
-        public Role Role { get; set; }
+        //public Role Role { get; set; }
     }
 }

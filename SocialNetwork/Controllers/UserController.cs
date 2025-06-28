@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Common.Dto;
+﻿using Common.Dto;
+using Microsoft.AspNetCore.Authorization; // ?
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Repository.Entities;
 using Service.Interfaces;
 using Service.Services;
-using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Microsoft.AspNetCore.Authorization; // ?
+using System.Threading.Tasks;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -45,8 +46,8 @@ namespace SocialNetwork.Controllers
         }
 
         // POST api/<UserController>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromForm] UserDto user)
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromForm] UserDto user)
         {
             // Validation
             
@@ -89,14 +90,16 @@ namespace SocialNetwork.Controllers
             {
                 return BadRequest("Password cannot contain spaces.");
             }
-            
+
             // Image
 
             if (user.fileImageProfile != null)
             {
                 UploadImage(user.fileImageProfile);
                 user.ImageProfileUrl = user.fileImageProfile.FileName;
+                // אולי פה צריך להוסיף את שמירת מערך הביטים???
             }
+
             return Ok(await service.Add(user));
         }
 
@@ -141,7 +144,7 @@ namespace SocialNetwork.Controllers
                 {
                     Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    Role = (Role)Enum.Parse(typeof(Role), UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value),
+                    //Role = (Role)Enum.Parse(typeof(Role), UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value),
                     Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value,
                 };
 

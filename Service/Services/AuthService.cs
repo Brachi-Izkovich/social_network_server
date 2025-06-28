@@ -51,7 +51,7 @@ namespace Service.Services
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Name,user.Name),
                 new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                //new Claim(ClaimTypes.Role, user.Role.ToString()),
                 //new Claim("userId", userId.ToString()) //
                 };
             var token = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"],

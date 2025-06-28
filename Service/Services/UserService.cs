@@ -22,6 +22,15 @@ namespace Service.Services
         }
         public async Task<UserDto> Add(UserDto user)
         {
+            var newUser = new User
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                ImageProfileUrl = user.ImageProfileUrl,
+                Role = Role.New,
+                CountMessages = 0,
+            };
             return mapper.Map<UserDto>(await repository.Add(mapper.Map<User>(user)));
         }
 
