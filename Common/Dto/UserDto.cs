@@ -18,9 +18,10 @@ namespace Common.Dto
         public string Name { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
+        //[System.Text.Json.Serialization.JsonIgnore]
         public byte[]? ArrImageProfile { get; set; }
         public IFormFile? fileImageProfile { get; set; }
+        public string? ImageProfileUrl { get; set; } // זה מחזיר את שם קובץ התמונה שנשמר
         public Role Role { get; set; }
     }
 }

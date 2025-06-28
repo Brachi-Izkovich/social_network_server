@@ -48,7 +48,11 @@ namespace SocialNetwork.Controllers
         [HttpPost]
         public async Task<UserDto> Post([FromForm] UserDto user)
         {
-            UploadImage(user.fileImageProfile);
+            if (user.fileImageProfile != null)
+            {
+                UploadImage(user.fileImageProfile);
+                user.ImageProfileUrl = user.fileImageProfile.FileName;
+            }
             return await service.Add(user);
         }
 
