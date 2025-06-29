@@ -62,6 +62,7 @@ builder.Services.AddAutoMapper(typeof(MyMapper));
 //add the db
 builder.Services.AddDbContext<IContext, Database>();
 
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

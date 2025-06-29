@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repository.Entities;
 using Repository.Interfaces;
@@ -7,6 +8,7 @@ using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,16 +18,27 @@ namespace Service.Services
     {
         private readonly IRepository<Feedback> repository;
         private readonly IMapper mapper;
-        //private readonly IExtention extention;
-        public FeedbackService(IRepository<Feedback> repository, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public FeedbackService(IRepository<Feedback> repository, IMapper mapper, IHttpContextAccessor _httpContextAccessor)
         {
             this.repository = repository;
             this.mapper = mapper;
-            //this.extention = extention;
+            this._httpContextAccessor = _httpContextAccessor;
         }
-        public async Task<FeedbackDto> Add(FeedbackDto user)
+        public async Task<FeedbackDto> Add(FeedbackDto feedbackDto)
         {
-            return mapper.Map<FeedbackDto>(await repository.Add(mapper.Map<Feedback>(user)));
+            var userIdStr = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+                throw new UnauthorizedAccessException("User ID not found in token.");
+
+            var feedback = new Feedback()
+            {
+               Type=feedbackDto.Type,
+               UserId=userId,
+               MessageId=feedbackDto.MessageId
+            };
+            var addedFeedback = await repository.Add(feedback);
+            return mapper.Map<FeedbackDto>(addedFeedback);
         }
 
         public async Task Delete(int id)

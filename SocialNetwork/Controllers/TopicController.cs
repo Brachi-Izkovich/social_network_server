@@ -37,9 +37,10 @@ namespace SocialNetwork.Controllers
         // POST api/<TopicController>
         [HttpPost]
         [Authorize]
-        public async Task<TopicDto> Post([FromBody] TopicDto topic)
+        public async Task<IActionResult> Post([FromBody] TopicDto topicDto)
         {
-            return await service.Add(topic);
+            await service.Add(topicDto);
+            return Ok();
         }
 
 

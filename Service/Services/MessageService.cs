@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Microsoft.AspNetCore.Http;
 using Repository.Entities;
 using Repository.Interfaces;
 using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,14 +17,28 @@ namespace Service.Services
     {
         private readonly IRepository<Message> repository;
         private readonly IMapper mapper;
-        public MessageService(IRepository<Message> repository, IMapper mapper)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public MessageService(IRepository<Message> repository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.httpContextAccessor = httpContextAccessor;
         }
-        public async Task<MessageDto> Add(MessageDto user)
+        public async Task<MessageDto> Add(MessageDto messageDto)
         {
-            return mapper.Map<MessageDto>(await repository.Add(mapper.Map<Message>(user)));
+            var userIsStr = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(!int.TryParse(userIsStr, out int userId))
+                throw new UnauthorizedAccessException("User ID not found in token.");
+            var message = new Message()
+            {
+                Content = messageDto.Content,
+                UserId = userId,
+                TopicId = messageDto.TopicId,
+                TimeSend = DateTime.UtcNow,
+                Likes=new List<Feedback>()
+            };
+            var addedMessage= await repository.Add(message);
+            return mapper.Map<MessageDto>(addedMessage);
         }
 
         public async Task Delete(int id)
