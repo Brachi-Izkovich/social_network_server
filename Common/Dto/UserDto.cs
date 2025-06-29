@@ -21,7 +21,7 @@ namespace Common.Dto
         //[System.Text.Json.Serialization.JsonIgnore]
         public byte[]? ArrImageProfile { get; set; }
         public IFormFile? fileImageProfile { get; set; }
-        public string? ImageProfileUrl { get; set; } // זה מחזיר את שם קובץ התמונה שנשמר
+        public string? ImageProfileUrl { get; set; } 
         //public Role Role { get; set; }
     }
 }

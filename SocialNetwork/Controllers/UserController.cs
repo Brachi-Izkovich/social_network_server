@@ -47,6 +47,7 @@ namespace SocialNetwork.Controllers
 
         // POST api/<UserController>
         [HttpPost("Register")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> Register([FromForm] UserDto user)
         {
             // Validation
@@ -97,8 +98,8 @@ namespace SocialNetwork.Controllers
             {
                 UploadImage(user.fileImageProfile);
                 user.ImageProfileUrl = user.fileImageProfile.FileName;
-                // אולי פה צריך להוסיף את שמירת מערך הביטים???
             }
+            Console.WriteLine("Length of image bytes: " + user.ArrImageProfile?.Length);
 
             return Ok(await service.Add(user));
         }
@@ -152,7 +153,6 @@ namespace SocialNetwork.Controllers
             return null;
         }
 
-
         // PUT api/<FeedbackController>/5
         [HttpPut("{userId}")]
         [Authorize]
@@ -192,9 +192,18 @@ namespace SocialNetwork.Controllers
             return Ok();
         }
 
+        //[HttpGet("user/image/{userId}")]
+        //public IActionResult GetUserImage(int userId)
+        //{
+        //    var user = service.GetById(userId);
+        //    if (user?.ArrImageProfile == null)
+        //        return NotFound();
+
+        //    return File(user.ArrImageProfile, "image/jpeg");
+        //}
+
         private void UploadImage(IFormFile file)
         {
-            //ניתוב לתמונה
             var path = Path.Combine(Environment.CurrentDirectory, "Images/", file.FileName);
             using (var stream = new FileStream(path, FileMode.Create))
             {
