@@ -161,7 +161,7 @@ namespace SocialNetwork.Controllers
             int userIdfromClaim = int.Parse(userIdClaim);
 
             var isOwner = await owner.IsOwner(userId, userIdfromClaim);
-
+            
             if (!isOwner && !User.IsInRole("Admin"))
                 return Forbid(); // user can't update
 

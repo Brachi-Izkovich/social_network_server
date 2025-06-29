@@ -12,7 +12,7 @@ namespace Common.Dto
     public class TopicDto
     {
         public string Title { get; set; }
-        public int? UserId { get; set; }
+        //public int? UserId { get; set; }
         public int? CategoryId { get; set; }
     }
 }
