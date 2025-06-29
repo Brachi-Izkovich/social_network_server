@@ -13,7 +13,7 @@ namespace Common.Dto
     {
         public Imoje Type { get; set; }
         //need to remove, and get it at the site(atar)
-        public int UserId { get; set; }
+        //public int UserId { get; set; }
         public int MessageId { get; set; }
     }
 }
