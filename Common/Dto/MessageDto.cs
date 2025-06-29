@@ -11,8 +11,8 @@ namespace Common.Dto
     public class MessageDto
     {
         public string Content { get; set; }
-        public DateTime TimeSend { get; set; }
-        public int? UserId { get; set; }
+        //public DateTime TimeSend { get; set; }
+        //public int? UserId { get; set; }
         public int TopicId { get; set; }
     }
 }

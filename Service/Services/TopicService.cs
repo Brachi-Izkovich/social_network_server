@@ -37,7 +37,6 @@ namespace Service.Services
                 CategoryId = topicDto.CategoryId,
                 ListMessages = new List<Message>()
             };
-            //return mapper.Map<TopicDto>(await repository.Add(mapper.Map<Topic>(user)));
             var addedTopic = await repository.Add(topic);
             return mapper.Map<TopicDto>(addedTopic);
         }

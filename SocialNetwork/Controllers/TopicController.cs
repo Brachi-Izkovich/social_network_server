@@ -39,10 +39,6 @@ namespace SocialNetwork.Controllers
         [Authorize]
         public async Task<IActionResult> Post([FromBody] TopicDto topicDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Unauthorized();
-
             await service.Add(topicDto);
             return Ok();
         }
