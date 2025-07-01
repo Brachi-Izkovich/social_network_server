@@ -23,9 +23,9 @@ namespace SocialNetwork.Controllers
             var result = await _adminService.ChangeUserRoleAsync(dto);
 
             if(result.Success)
-                return Ok(result.Message);
+                return Ok(result);
             else
-                return BadRequest(result.Message);
+                return BadRequest(result);
         }
 
         [HttpPost("change-admin-code")]
@@ -33,9 +33,9 @@ namespace SocialNetwork.Controllers
         {
             var result = await _adminService.ChangeAdminCodeAsync(dto);
             if (result.Success)
-                return Ok(result.Message);
+                return Ok(result);
             else
-                return BadRequest(result.Message);
+                return BadRequest(result);
         }
     }
 }

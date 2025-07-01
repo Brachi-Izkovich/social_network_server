@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Entities
 {
-    public class SystemSetting
+    public class SystemSettings
     {
         [Key]
         public int Id { get; set; }
