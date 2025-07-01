@@ -24,14 +24,19 @@ namespace Service.Services
             services.AddScoped<IService<MessageDto>, MessageService>();
             services.AddScoped<IService<TopicDto>, TopicService>();
             services.AddScoped<IService<CategoryDto>, CategoryService>();
-            //הגדרת התלויות....
+
             services.AddScoped<IOwner, FeedbackService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ILoginService, UserService>();
+
             services.AddScoped<IndexNameResolver>();
             services.AddScoped<SemanticSearchService>();
 
             services.AddAutoMapper(typeof(MyMapper));
+
+            services.AddScoped<UserRepository>();
+            services.AddScoped<IAdminService, AdminService>();
+
             return services;
         }
     }
