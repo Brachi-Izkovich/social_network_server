@@ -42,7 +42,6 @@ namespace SocialNetwork.Controllers
             return await service.Add(message);
         }
 
-        // להוסיף את הפונקציה ()*&^%$#@!
         // PUT api/<MessageController>/5
         [HttpPut("{messageId}")]
         [Authorize]
@@ -61,8 +60,6 @@ namespace SocialNetwork.Controllers
             await service.Update(messageId, message);
             return Ok();
         }
-
-
 
         // DELETE api/<FeedbackController>/5
         [HttpDelete("{messageId}")]
