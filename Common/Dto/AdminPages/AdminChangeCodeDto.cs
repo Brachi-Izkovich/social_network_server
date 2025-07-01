@@ -8,8 +8,8 @@ namespace Common.Dto.AdminPages
 {
     public class AdminChangeCodeDto
     {
-        public string Email { get; set; }
-        public string AdminCode { get; set; }
+        //public string Email { get; set; }
+        public string OldCode { get; set; }
         public string NewCode { get; set; }
     }
 }

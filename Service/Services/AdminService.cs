@@ -15,21 +15,29 @@ namespace Service.Services
     public class AdminService : IAdminService
     {
         private readonly UserRepository _userRepository;
-        private string adminCode;
+        private readonly IRepository<SystemSettings> _settingsRepository;
 
-        public AdminService(UserRepository userRepository, IConfiguration configuration)
+        public AdminService(UserRepository userRepository, IRepository<SystemSettings> settingsRepository)
         {
             _userRepository = userRepository;
-            adminCode = configuration["AdminSettings:AdminCode"];
+            _settingsRepository = settingsRepository;
+        }
+
+        private async Task<string?> GetAdminCodeAsync()
+        {
+            var setting = (await _settingsRepository.GetAll())
+                          .FirstOrDefault(s => s.Key == "AdminCode");
+            return setting?.Value;
         }
 
         public async Task<AdminChangeResultDto> ChangeUserRoleAsync(AdminChangeRoleDto dto)
         {
+            var adminCode = await GetAdminCodeAsync();
             if (dto.AdminCode != adminCode)
                 return new AdminChangeResultDto
                 {
                     Success = false,
-                    Message = "קוד מנהל לא תקין."
+                    Message = "Invalid admin code."
                 };
 
             var user = await _userRepository.GetById(dto.UserId);
@@ -37,7 +45,7 @@ namespace Service.Services
                 return new AdminChangeResultDto
                 {
                     Success = false,
-                    Message = "המשתמש לא נמצא."
+                    Message = "User not found."
                 };
 
             user.Role = dto.NewRole;
@@ -46,28 +54,44 @@ namespace Service.Services
             return new AdminChangeResultDto
             {
                 Success = true,
-                Message = "התפקיד עודכן בהצלחה."
+                Message = "Role updated successfully."
             };
         }
 
         public async Task<AdminChangeResultDto> ChangeAdminCodeAsync(AdminChangeCodeDto dto)
         {
-            if (dto.AdminCode != adminCode)
+            var currentCode = await GetAdminCodeAsync();
+
+            if (dto.OldCode != currentCode)
             {
                 return new AdminChangeResultDto
                 {
                     Success = false,
-                    Message = "קוד מנהל נוכחי לא תקין."
+                    Message = "Current admin code is invalid."
                 };
             }
 
-            adminCode = dto.NewCode;
+            var setting = (await _settingsRepository.GetAll())
+                .FirstOrDefault(s => s.Key == "AdminCode");
+
+            if (setting == null)
+            {
+                return new AdminChangeResultDto
+                {
+                    Success = false,
+                    Message = "Admin code setting not found."
+                };
+            }
+
+            setting.Value = dto.NewCode;
+            await _settingsRepository.Update(setting.Id, setting);
 
             return new AdminChangeResultDto
             {
                 Success = true,
-                Message = "קוד המנהל עודכן בהצלחה."
+                Message = "Admin code updated successfully."
             };
         }
+
     }
 }

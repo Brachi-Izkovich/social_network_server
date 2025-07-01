@@ -20,6 +20,7 @@ namespace Repository.Repositories
             services.AddScoped<IRepository<Message>, MessageRepository>();
             services.AddScoped<IRepository<Topic>, TopicRepository>();
             services.AddScoped<IRepository<Feedback>, FeedbackRepository>();
+            services.AddScoped<IRepository<SystemSettings>, SystemSettingsRepository>();
             return services;
         }
     }
