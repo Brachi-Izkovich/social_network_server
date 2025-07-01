@@ -21,5 +21,6 @@ namespace Repository.Entities
         public string? ImageProfileUrl { get; set; }
         public Role Role { get; set; } 
         public int CountMessages { get; set; }
+        public DateTime RegistrationDate { get; set; }
     }
 }

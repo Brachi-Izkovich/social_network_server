@@ -29,10 +29,10 @@ namespace Service.Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ILoginService, UserService>();
 
+            services.AddAutoMapper(typeof(MyMapper));
+
             services.AddScoped<IndexNameResolver>();
             services.AddScoped<SemanticSearchService>();
-
-            services.AddAutoMapper(typeof(MyMapper));
 
             services.AddScoped<UserRepository>();
             services.AddScoped<IAdminService, AdminService>();
