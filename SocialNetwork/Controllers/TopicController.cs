@@ -14,7 +14,7 @@ namespace SocialNetwork.Controllers
     [ApiController]
     public class TopicController : ControllerBase
     {
-        private readonly IService<TopicDto> service;
+        private readonly IService<TopicDto> service; 
         private readonly IOwner owner;
         public TopicController(IService<TopicDto> service, IOwner owner)
         {

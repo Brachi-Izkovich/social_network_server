@@ -145,7 +145,6 @@ namespace SocialNetwork.Controllers
                 {
                     Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    //Role = (Role)Enum.Parse(typeof(Role), UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value),
                     Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value,
                 };
 
