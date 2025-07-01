@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Common.Dto.User;
 using Repository.Entities;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,9 @@ namespace Service.Services
             CreateMap<Message, MessageDto>().ReverseMap();
             CreateMap<Topic, TopicDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserForAdminDto>().ReverseMap();
+            CreateMap<User, UserRegisterDto>().ReverseMap();
+            CreateMap<User, UserLogin>().ReverseMap();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.Dto;
+using Common.Dto.User;
 using Repository.Entities;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class UserService : IService<UserDto>, ILoginService,IOwner
+    public class UserService : IUserService, ILoginService,IOwner
     {
         private readonly IRepository<User> repository;
         private readonly IMapper mapper;
@@ -20,7 +20,7 @@ namespace Service.Services
             this.repository = repository;
             this.mapper = mapper;
         }
-        public async Task<UserDto> Add(UserDto user)
+        public async Task<UserDto> Add(UserRegisterDto user)
         {
             var newUser = new User
             {
@@ -32,6 +32,7 @@ namespace Service.Services
                 CountMessages = 0,
                 RegistrationDate = DateTime.UtcNow,
             };
+            //to change it?
             return mapper.Map<UserDto>(await repository.Add(mapper.Map<User>(user)));
         }
 
@@ -45,6 +46,16 @@ namespace Service.Services
             return mapper.Map<List<UserDto>>(await repository.GetAll());
         }
 
+        public async Task<List<UserForAdminDto>> GetAllForAdmin()
+        {
+            return mapper.Map<List<UserForAdminDto>>(await repository.GetAll());
+        }
+
+        public async Task<List<UserLogin>> GetAllUserLogin()
+        {
+            return mapper.Map<List<UserLogin>>(await repository.GetAll());
+        }
+
         public async Task<User> GetByEmail(string email)
         {
             var all = await repository.GetAll(); // מחזיר IEnumerable<User>
@@ -56,11 +67,11 @@ namespace Service.Services
             return mapper.Map<UserDto>(await repository.GetById(id));
         }
 
-        public async Task<UserDto?> GetByUsernameAndPasswordAsync(string username, string password)
+        public async Task<User?> GetByUsernameAndPasswordAsync(string username, string password)
         {
             var users = await repository.GetAll();
             var user = users.FirstOrDefault(u => u.Name == username && u.Password == password);
-            return user == null ? null : mapper.Map<UserDto>(user);
+            return user == null ? null : mapper.Map<User>(user);
         }
 
         public async Task<bool> IsOwner(int userIdToChange, int userId)
@@ -73,5 +84,6 @@ namespace Service.Services
         {
             await repository.Update(id, mapper.Map<User>(item));
         }
+
     }
 }

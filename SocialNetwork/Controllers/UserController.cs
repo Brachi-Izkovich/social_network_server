@@ -1,4 +1,4 @@
-﻿using Common.Dto;
+﻿using Common.Dto.User;
 using Microsoft.AspNetCore.Authorization; // ?
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +21,12 @@ namespace SocialNetwork.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IService<UserDto> service;
+        private readonly IUserService userService;
         private readonly IAuthService authService;
         private readonly IOwner owner;
-        public UserController(IService<UserDto> service, IAuthService authService, IOwner owner)
+        public UserController(IUserService userService, IAuthService authService, IOwner owner)
         {
-            this.service = service;
+            this.userService = userService;
             this.authService = authService;
             this.owner = owner;
         }
@@ -35,20 +35,20 @@ namespace SocialNetwork.Controllers
         //[AllowAnonymous]
         public async Task<List<UserDto>> Get()
         {
-            return await service.GetAll();
+            return await userService.GetAll();
         }
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
         public async Task<UserDto> Get(int id)
         {
-            return await service.GetById(id);
+            return await userService.GetById(id);
         }
 
         // POST api/<UserController>
         [HttpPost("Register")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Register([FromForm] UserDto user)
+        public async Task<IActionResult> Register([FromForm] UserRegisterDto user)
         {
             // Validation
             
@@ -101,29 +101,31 @@ namespace SocialNetwork.Controllers
             }
             Console.WriteLine("Length of image bytes: " + user.ArrImageProfile?.Length);
 
-            return Ok(await service.Add(user));
+            return Ok(await userService.Add(user));
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm] UserLogin userLogin)
         {
-            var user = await authService.AuthenticateAsync(userLogin);
-            if (user != null)
+            try
             {
-                var token = await authService.GenerateTokenAsync(user);
+                var token = await authService.GenerateTokenAsync(userLogin);
                 return Ok(token);
             }
-            return Unauthorized("User not found");
+            catch(Exception)
+            {
+                return Unauthorized("user not found");
+            }
         }
 
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("GetUserByToken")]
-        public async Task<UserDto> GetUserByToken()
-        {
-            UserDto user = GetCurrentUser();
-            return user;
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("GetUserByToken")]
+        //public async Task<UserDto> GetUserByToken()
+        //{
+        //    UserDto user = GetCurrentUser();
+        //    return user;
+        //}
         private int GetCurrentUserId()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -135,22 +137,22 @@ namespace SocialNetwork.Controllers
             }
             throw new Exception("User ID not found in token");
         }
-        private UserDto GetCurrentUser()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                var UserClaim = identity.Claims;
-                return new UserDto()
-                {
-                    Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
-                    Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
-                    Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value,
-                };
+        //private UserDto GetCurrentUser()
+        //{
+        //    var identity = HttpContext.User.Identity as ClaimsIdentity;
+        //    if (identity != null)
+        //    {
+        //        var UserClaim = identity.Claims;
+        //        return new UserDto()
+        //        {
+        //            Name = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+        //            Email = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
+        //            Password = UserClaim.FirstOrDefault(x => x.Type == ClaimTypes.PostalCode)?.Value,
+        //        };
 
-            }
-            return null;
-        }
+        //    }
+        //    return null;
+        //}
 
         // PUT api/<FeedbackController>/5
         [HttpPut("{userId}")]
@@ -167,7 +169,7 @@ namespace SocialNetwork.Controllers
             if (!isOwner && !User.IsInRole("Admin"))
                 return Forbid(); // user can't update
 
-            await service.Update(userId, user);
+            await userService.Update(userId, user);
             return Ok();
         }
 
@@ -187,7 +189,7 @@ namespace SocialNetwork.Controllers
             if (!isOwner && !User.IsInRole("Admin"))
                 return Forbid(); // user can't delete
 
-            await service.Delete(id);
+            await userService.Delete(id);
             return Ok();
         }
 

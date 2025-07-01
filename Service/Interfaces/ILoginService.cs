@@ -1,4 +1,4 @@
-﻿using Common.Dto;
+﻿using Common.Dto.User;
 using Repository.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Service.Interfaces
 {
-    public interface ILoginService : IService<UserDto>
+    public interface ILoginService
     {
-        Task<UserDto?> GetByUsernameAndPasswordAsync(string username, string password);
-        Task<User> GetByEmail(string email); //
+        Task<User?> GetByUsernameAndPasswordAsync(string username, string password);
+        Task<User?> GetByEmail(string email);
+        Task<List<UserLogin?>> GetAllUserLogin();
     }
 }

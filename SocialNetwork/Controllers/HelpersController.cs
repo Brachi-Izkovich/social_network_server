@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Entities;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,6 +20,11 @@ namespace SocialNetwork.Controllers
             var userRoleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
             if (userIdClaim == null)
                 return Unauthorized();
+            if(userRoleClaim == Role.Admin.ToString())
+            {
+                var admin = "Admin";
+                return Ok(new {admin, nameClaim, userIdClaim, userRoleClaim });
+            }
             return Ok(new { nameClaim, userIdClaim, userRoleClaim});
         }
     }

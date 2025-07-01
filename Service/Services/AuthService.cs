@@ -1,4 +1,5 @@
-﻿using Common.Dto;
+﻿using AutoMapper;
+using Common.Dto.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Entities;
@@ -17,42 +18,46 @@ namespace Service.Services
     {
         private readonly IConfiguration config;
         private readonly ILoginService service;
-        public AuthService(IConfiguration config, ILoginService service)
+        private readonly IMapper mapper;
+        public AuthService(IConfiguration config, ILoginService service, IMapper mapper)
         {
             this.config = config;
             this.service = service;
+            this.mapper = mapper;
         }
 
         public Task<UserDto> AuthenticateAsync(UserLogin userLogin)
         {
             return AuthenticatePrivate(userLogin);
         }
-
-        public async Task<string> GenerateTokenAsync(UserDto user)
+        private async Task<UserDto> AuthenticatePrivate(UserLogin userLogin)
         {
-            var realUser = await service.GetByEmail(user.Email);
+            var realUser = await service.GetByUsernameAndPasswordAsync(userLogin.UserName, userLogin.Password);
+            if (realUser == null) return null;
+            return mapper.Map<UserDto>(realUser);
+
+            //var allUsers = await service.GetAllUserLogin();
+            //UserLogin returnUser = allUsers.FirstOrDefault(x => x.Password == userLogin.Password && x.UserName == userLogin.UserName && x.Email == userLogin.Email);
+
+            //return mapper.Map<UserDto>(returnUser); // גם אם null, זה בסדר
+        }
+        public async Task<string> GenerateTokenAsync(UserLogin userLogin)
+        {
+            var realUser = await service.GetByUsernameAndPasswordAsync(userLogin.UserName,userLogin.Password);
             if(realUser == null)
                 throw new Exception("User not found");
-            return await GenerateTokenPrivate(user,realUser.Id,realUser.Role);
+            return await GenerateTokenPrivate(realUser);
         }
 
-        private async Task<UserDto> AuthenticatePrivate(UserLogin user)
-        {
-            var allUsers = await service.GetAll(); // מניח שזה מחזיר Task<IEnumerable<UserDto>>
-            UserDto returnUser = allUsers.FirstOrDefault(x => x.Password == user.Password && x.Name == user.UserName && x.Email == user.Email);
-
-            return returnUser; // גם אם null, זה בסדר
-        }
-
-        private async Task<string> GenerateTokenPrivate(UserDto user, int userId,Role userRole)
+        private async Task<string> GenerateTokenPrivate(User user)
         {
             var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
             var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name,user.Name),
                 new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Role, userRole.ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString())
                 };
             var token = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"],
                 claims,

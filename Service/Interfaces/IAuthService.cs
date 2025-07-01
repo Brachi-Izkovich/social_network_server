@@ -1,4 +1,4 @@
-﻿using Common.Dto;
+﻿using Common.Dto.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Service.Interfaces
 {
     public interface IAuthService//security
     {
-        Task<string> GenerateTokenAsync(UserDto user);
+        Task<string> GenerateTokenAsync(UserLogin userLogin);
         Task<UserDto> AuthenticateAsync(UserLogin userLogin);
     }
 }
