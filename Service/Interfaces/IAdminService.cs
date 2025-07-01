@@ -1,4 +1,4 @@
-﻿using Common.Dto;
+﻿using Common.Dto.AdminPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ namespace Service.Interfaces
 {
     public interface IAdminService
     {
-        Task<AdminChangeRoleResultDto> ChangeUserRoleAsync(AdminChangeRoleDto dto);
+        Task<AdminChangeResultDto> ChangeUserRoleAsync(AdminChangeRoleDto dto);
+        Task<AdminChangeResultDto> ChangeAdminCodeAsync(AdminChangeCodeDto dto);
     }
 }

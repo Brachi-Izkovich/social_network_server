@@ -30,6 +30,7 @@ namespace Service.Services
                 ImageProfileUrl = user.ImageProfileUrl,
                 Role = Role.New,
                 CountMessages = 0,
+                RegistrationDate = DateTime.UtcNow,
             };
             return mapper.Map<UserDto>(await repository.Add(mapper.Map<User>(user)));
         }

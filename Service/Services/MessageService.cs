@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class MessageService : IService<MessageDto>,IOwner
+    public class MessageService : IService<MessageDto>, IOwner
     {
         private readonly IRepository<Message> repository;
         private readonly IMapper mapper;
@@ -27,7 +27,7 @@ namespace Service.Services
         public async Task<MessageDto> Add(MessageDto messageDto)
         {
             var userIsStr = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(!int.TryParse(userIsStr, out int userId))
+            if (!int.TryParse(userIsStr, out int userId))
                 throw new UnauthorizedAccessException("User ID not found in token.");
             var message = new Message()
             {
@@ -35,9 +35,9 @@ namespace Service.Services
                 UserId = userId,
                 TopicId = messageDto.TopicId,
                 TimeSend = DateTime.UtcNow,
-                Likes=new List<Feedback>()
+                Likes = new List<Feedback>()
             };
-            var addedMessage= await repository.Add(message);
+            var addedMessage = await repository.Add(message);
             return mapper.Map<MessageDto>(addedMessage);
         }
 

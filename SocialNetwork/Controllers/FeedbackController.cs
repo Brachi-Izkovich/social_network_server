@@ -83,18 +83,5 @@ namespace SocialNetwork.Controllers
             await service.Delete(feedbackId);
             return Ok();
         }
-
-
-        [HttpGet("whoami")]
-        [Authorize]
-        public IActionResult WhoAmI()
-        {
-            var nameClaim = User.FindFirst(ClaimTypes.Name)?.Value;
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRoleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-            if (userIdClaim == null)
-                return Unauthorized();
-            return Ok(new { nameClaim, userIdClaim,userRoleClaim });
-        }
     }
 }

@@ -19,6 +19,7 @@ namespace Mock
         public DbSet<Category> Categories { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<SystemSetting> SystemSettings { get; set; }
 
         public async Task Save()
         {
