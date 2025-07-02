@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using Service.Search;
+using Service.Services.Search;
 
-namespace Service.Services
+namespace Service.Services.Table
 {
     public class TopicService : IService<TopicDto>, IOwner
     {

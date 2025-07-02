@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Helpers
+namespace Service.Services.Helpers
 {
     public class IndexNameResolver
     {
@@ -17,7 +17,7 @@ namespace Service.Helpers
         public string GetIndexName()
         {
             var baseName = _cfg["Pinecone:BaseIndexName"] ?? "socialnetwork";
-            Console.WriteLine("baseName: "+baseName);
+            Console.WriteLine("baseName: " + baseName);
             var machineName = Environment.MachineName.ToLower();
 
             // מתאימים לפי שמות מחשב (תבדקי מה השם אצלך ואצל החברה שלך)

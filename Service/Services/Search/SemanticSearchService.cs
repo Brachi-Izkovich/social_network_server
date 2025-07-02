@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Service.Helpers;
+using Service.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Service.Search
+namespace Service.Services.Search
 {
     public class SemanticSearchService
     {
@@ -87,8 +87,8 @@ namespace Service.Search
 
             var body = new
             {
-                vector = vector,
-                topK = topK,
+                vector,
+                topK,
                 includeMetadata = true
             };
 

@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Services
+namespace Service.Services.Table
 {
     public class MessageService : IService<MessageDto>, IOwner
     {

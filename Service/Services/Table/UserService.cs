@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Services
+namespace Service.Services.Table
 {
-    public class UserService : IUserService, ILoginService,IOwner
+    public class UserService : IUserService, ILoginService, IOwner
     {
         private readonly IRepository<User> repository;
         private readonly IMapper mapper;

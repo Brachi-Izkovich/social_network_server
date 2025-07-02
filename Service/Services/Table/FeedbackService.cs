@@ -12,9 +12,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Services
+namespace Service.Services.Table
 {
-    public class FeedbackService : IService<FeedbackDto>,IOwner
+    public class FeedbackService : IService<FeedbackDto>, IOwner
     {
         private readonly IRepository<Feedback> repository;
         private readonly IMapper mapper;
@@ -33,9 +33,9 @@ namespace Service.Services
 
             var feedback = new Feedback()
             {
-               Type=feedbackDto.Type,
-               UserId=userId,
-               MessageId=feedbackDto.MessageId
+                Type = feedbackDto.Type,
+                UserId = userId,
+                MessageId = feedbackDto.MessageId
             };
             var addedFeedback = await repository.Add(feedback);
             return mapper.Map<FeedbackDto>(addedFeedback);

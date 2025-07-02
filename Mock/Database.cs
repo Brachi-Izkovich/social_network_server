@@ -20,6 +20,8 @@ namespace Mock
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<SystemSettings> SystemSettings { get; set; }
+        public DbSet<EmailRequest> EmailRequests { get; set; }
+        public DbSet<MailJetSetting> MailJetSettings { get; set; }
 
         public async Task Save()
         {
