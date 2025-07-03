@@ -1,32 +1,34 @@
 ﻿using AutoMapper;
 using Common.Dto;
+using Microsoft.AspNetCore.Http;
 using Repository.Entities;
 using Repository.Interfaces;
+using Repository.Repositories;
 using Service.Interfaces;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Security.Claims;
-using Service.Services.Search;
 
 namespace Service.Services.Table
 {
-    public class TopicService : IService<TopicDto>, IOwner
+    public class TopicService : IOwner, ITopicService
     {
         private readonly IRepository<Topic> repository;
         private readonly IMapper mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly SemanticSearchService _searchService;
-        public TopicService(IRepository<Topic> repository, IMapper mapper, IHttpContextAccessor httpContextAccessor, SemanticSearchService searchService)
+        private readonly IRepository<Topic> _topicRepository;
+
+        public TopicService(IRepository<Topic> repository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IRepository<Topic> topicRepository)
         {
             this.repository = repository;
             this.mapper = mapper;
             httpContextAccessor = httpContextAccessor;
-            _searchService = searchService;
+            _topicRepository = topicRepository;
         }
+
         public async Task<TopicDto> Add(TopicDto topicDto)
         {
             var userIdStr = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -70,20 +72,39 @@ namespace Service.Services.Table
             await repository.Update(id, mapper.Map<Topic>(item));
         }
 
-        public async Task<List<TopicDto>> SearchSimilarTopicsAndMessages(string text)
+        // Search
+
+        public async Task<List<TopicDto>> GetSimilarTopicsAsync(string newTitle)
         {
-            // שלב 1: הפוך את המחרוזת לווקטור
-            var embedding = await _searchService.GetEmbeddingFromOpenAI(text);
+            if (string.IsNullOrWhiteSpace(newTitle))
+                return new List<TopicDto>();
 
-            // שלב 2: שלח ל-Pinecone וחפש דומים
-            var similarIds = await _searchService.SearchSimilarItems(embedding, topK: 5); // החזיר מזהים
+            string Normalize(string text) =>
+                text.ToLower().Trim();
 
-            // שלב 3: תסנן את הנושאים במסד לפי ה-IDs
-            var allTopics = await repository.GetAll(); // מביא את כל הנושאים
-            var matchingTopics = allTopics
-                .Where(t => similarIds.Contains(t.Id.ToString()))
+            var normalizedNew = Normalize(newTitle);
+
+            var allTopics = await repository.GetAll();
+
+            var similar = allTopics
+                .Where(t => GetSimilarityScore(Normalize(t.Title), normalizedNew) > 0.4)
                 .ToList();
-            return mapper.Map<List<TopicDto>>(matchingTopics);
+
+            return mapper.Map<List<TopicDto>>(similar);
+        }
+
+        private double GetSimilarityScore(string s1, string s2)
+        {
+            var words1 = s1.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
+            var words2 = s2.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
+
+            if (words1.Count == 0 || words2.Count == 0)
+                return 0;
+
+            var intersection = words1.Intersect(words2).Count();
+            var union = words1.Union(words2).Count();
+
+            return (double)intersection / union;
         }
     }
 }

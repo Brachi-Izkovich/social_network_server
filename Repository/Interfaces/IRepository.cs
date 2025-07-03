@@ -13,6 +13,5 @@ namespace Repository.Interfaces
         Task<T> Add(T item);
         Task Update(int id, T item);
         Task Delete(int id);
-
     }
 }

@@ -5,8 +5,6 @@ using Repository.Entities;
 using Repository.Interfaces;
 using Repository.Repositories;
 using Service.Interfaces;
-using Service.Services.Helpers;
-using Service.Services.Search;
 using Service.Services.Table;
 using System;
 using System.Collections.Generic;
@@ -24,7 +22,7 @@ namespace Service.Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IService<FeedbackDto>, FeedbackService>();
             services.AddScoped<IService<MessageDto>, MessageService>();
-            services.AddScoped<IService<TopicDto>, TopicService>();
+            //services.AddScoped<IService<TopicDto>, TopicService>();
             services.AddScoped<IService<CategoryDto>, CategoryService>();
 
             services.AddScoped<IOwner, FeedbackService>();
@@ -33,13 +31,13 @@ namespace Service.Services
 
             services.AddAutoMapper(typeof(MyMapper));
 
-            services.AddScoped<IndexNameResolver>();
-            services.AddScoped<SemanticSearchService>();
-
             services.AddScoped<UserRepository>();
             services.AddScoped<IAdminService, AdminService>();
 
             services.AddTransient<EmailService>();
+
+            //services.AddScoped<ISearchService, SearchService>();
+            services.AddScoped<ITopicService, TopicService>();
 
             return services;
         }

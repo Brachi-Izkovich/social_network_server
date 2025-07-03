@@ -14,13 +14,15 @@ namespace SocialNetwork.Controllers
     [ApiController]
     public class TopicController : ControllerBase
     {
-        private readonly IService<TopicDto> service; 
+        private readonly ITopicService service; 
         private readonly IOwner owner;
-        public TopicController(IService<TopicDto> service, IOwner owner)
+
+        public TopicController(ITopicService service, IOwner owner)
         {
             this.service = service;
             this.owner = owner;
         }
+
         // GET: api/<TopicController>
         [HttpGet]
         public async Task<List<TopicDto>> Get()
@@ -84,14 +86,12 @@ namespace SocialNetwork.Controllers
             return Ok();
         }
 
-        [HttpPost("search-similar")]
-        public async Task<List<TopicDto>> SearchSimilar([FromBody] string text)
+        [HttpGet("similar")]
+        public async Task<IActionResult> GetSimilarTopics([FromQuery] string title)
         {
-            var topicService = service as TopicService;
-            if (topicService == null)
-                throw new Exception("Advanced search only available in TopicService");
-
-            return await topicService.SearchSimilarTopicsAndMessages(text);
+            var similarTopics = await service.GetSimilarTopicsAsync(title);
+            return Ok(similarTopics);
         }
+
     }
 }

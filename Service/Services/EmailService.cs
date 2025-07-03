@@ -31,7 +31,7 @@ namespace Service.Services
                 .Property(Send.Messages, new JArray {
                 new JObject {
                     {"From", new JObject {
-                        {"Email", "0264brachi@gmail.com"},  // כתובת מייל שאושרה ב-Mailjet
+                        {"Email", "0264brachi@gmail.com"}, 
                         {"Name", "Social Network"}
                     }},
                     {"To", new JArray {
