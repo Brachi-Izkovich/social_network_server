@@ -76,35 +76,48 @@ namespace Service.Services.Table
 
         public async Task<List<TopicDto>> GetSimilarTopicsAsync(string newTitle)
         {
-            if (string.IsNullOrWhiteSpace(newTitle))
-                return new List<TopicDto>();
-
-            string Normalize(string text) =>
-                text.ToLower().Trim();
-
-            var normalizedNew = Normalize(newTitle);
+            var normalizedNew = ExtractKeywords(newTitle);
 
             var allTopics = await repository.GetAll();
 
             var similar = allTopics
-                .Where(t => GetSimilarityScore(Normalize(t.Title), normalizedNew) > 0.4)
+                .Where(t =>
+                {
+                    var topicKeywords = ExtractKeywords(t.Title);
+                    return GetSimilarityScore(normalizedNew, topicKeywords) > 0.3;
+                })
                 .ToList();
 
             return mapper.Map<List<TopicDto>>(similar);
         }
 
-        private double GetSimilarityScore(string s1, string s2)
-        {
-            var words1 = s1.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
-            var words2 = s2.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet();
 
-            if (words1.Count == 0 || words2.Count == 0)
+        private double GetSimilarityScore(HashSet<string> a, HashSet<string> b)
+        {
+            if (a.Count == 0 || b.Count == 0)
                 return 0;
 
-            var intersection = words1.Intersect(words2).Count();
-            var union = words1.Union(words2).Count();
+            var intersection = a.Intersect(b).Count();
+            var union = a.Union(b).Count();
 
             return (double)intersection / union;
+        }
+
+        private static readonly HashSet<string> stopWords = new HashSet<string>
+        {
+            "אני", "אתה", "את", "הוא", "היא", "אנחנו", "אתם", "אתן",
+            "רוצה", "רוצים", "צריכה", "צריך", "חושבת", "חושב", "יש",
+            "אין", "מתי", "איך", "מה", "מי", "ולמה", "ולכן", "אז", "אם",
+            "של", "על", "עם", "ב", "ל", "ו", "ה", "כי", "כן", "לא", "כל", "עוד", "כמו", "לפי", "משתפת"
+        };
+
+        private HashSet<string> ExtractKeywords(string input)
+        {
+            return input
+                .ToLower()
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Where(word => !stopWords.Contains(word))
+                .ToHashSet();
         }
     }
 }
