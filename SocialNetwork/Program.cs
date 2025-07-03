@@ -1,12 +1,13 @@
 ﻿
+using Common.Dto.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Mock;
 using Repository.Interfaces;
 using Service.Interfaces;
 using Service.Services;
 using System.Text;
-using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,9 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-//מהמורה
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SupportNonNullableReferenceTypes();
@@ -28,7 +28,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "SocialNetwork", Version = "v1" });
 
-    // הגדרת Authentication ב-Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -57,12 +56,15 @@ builder.Services.AddSwaggerGen(c =>
 
 
 builder.Services.AddServices();
-//add המרות
+
 builder.Services.AddAutoMapper(typeof(MyMapper));
-//add the db
+
 builder.Services.AddDbContext<IContext, Database>();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<MailJetSetting>(
+    builder.Configuration.GetSection("MailJet"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -82,14 +84,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-//to delete
 Console.WriteLine(Environment.MachineName);
 
-app.UseAuthentication(); // ← חובה לפני UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
 

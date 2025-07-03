@@ -30,6 +30,7 @@ namespace SocialNetwork.Controllers
             this.authService = authService;
             this.owner = owner;
         }
+
         // GET: api/<UserController>
         [HttpGet]
         //[AllowAnonymous]
@@ -126,6 +127,7 @@ namespace SocialNetwork.Controllers
         //    UserDto user = GetCurrentUser();
         //    return user;
         //}
+
         private int GetCurrentUserId()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Common.Dto.Email;
 using Mailjet.Client;
 using Mailjet.Client.Resources;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using Repository.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Service.Services
@@ -31,8 +31,8 @@ namespace Service.Services
                 .Property(Send.Messages, new JArray {
                 new JObject {
                     {"From", new JObject {
-                        {"Email", "zk6722355@gmail.com"},  // כתובת מייל שאושרה ב-Mailjet
-                        {"Name", "Nutri track"}
+                        {"Email", "0264brachi@gmail.com"},  // כתובת מייל שאושרה ב-Mailjet
+                        {"Name", "Social Network"}
                     }},
                     {"To", new JArray {
                         new JObject {

@@ -15,26 +15,41 @@ namespace Service.Services.Table
     {
         private readonly IRepository<User> repository;
         private readonly IMapper mapper;
-        public UserService(IRepository<User> repository, IMapper mapper)
+        private readonly EmailService emailService;
+
+        public UserService(IRepository<User> repository, IMapper mapper, EmailService emailService)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.emailService = emailService;
         }
+
         public async Task<UserDto> Add(UserRegisterDto user)
         {
-            var newUser = new User
-            {
-                Name = user.Name,
-                Email = user.Email,
-                Password = user.Password,
-                ImageProfileUrl = user.ImageProfileUrl,
-                Role = Role.New,
-                CountMessages = 0,
-                RegistrationDate = DateTime.UtcNow,
-            };
-            //to change it?
-            return mapper.Map<UserDto>(await repository.Add(mapper.Map<User>(user)));
+            var newUser = mapper.Map<User>(user);
+
+            newUser.Role = Role.New;
+            newUser.CountMessages = 0;
+            newUser.RegistrationDate = DateTime.UtcNow;
+
+            var addedUser = await repository.Add(newUser);
+
+            await emailService.SendEmailAsync(
+                toEmail: addedUser.Email,
+                toName: addedUser.Name,
+                subject: "Welcome to Social Network!",
+                body: $"""
+               Hello {addedUser.Name},<br/>
+               Your account has been created.<br/>
+               <b>Username:</b> {addedUser.Name}<br/>
+               <b>Your Email:</b> {addedUser.Email}<br/>
+               <b>Your Password:</b> {user.Password}
+               """
+            );
+
+            return mapper.Map<UserDto>(addedUser);
         }
+
 
         public async Task Delete(int id)
         {

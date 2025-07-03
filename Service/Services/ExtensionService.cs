@@ -39,6 +39,8 @@ namespace Service.Services
             services.AddScoped<UserRepository>();
             services.AddScoped<IAdminService, AdminService>();
 
+            services.AddTransient<EmailService>();
+
             return services;
         }
     }
