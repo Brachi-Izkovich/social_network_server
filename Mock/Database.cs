@@ -11,9 +11,6 @@ namespace Mock
 {
     public class Database : DbContext, IContext
     {
-        //miri = DESKTOP-FKDF8KP\SQLSERVR
-        //brachi = BRACHIH-COMPUTE\SQLDATABASE
-        //seminar = sql
         public DbSet<User> Users { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -27,9 +24,13 @@ namespace Mock
             await SaveChangesAsync();
         }
 
+        //miri = DESKTOP-FKDF8KP\SQLSERVR
+        //brachi = BRACHIH-COMPUTE\SQLDATABASE
+        //seminar = sql
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=DESKTOP-FKDF8KP\\SQLSERVR;database=SocialNetwork;trusted_connection=true;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("server=BRACHIH-COMPUTE\\SQLDATABASE;database=SocialNetwork;trusted_connection=true;TrustServerCertificate=True");
         }
 
     }

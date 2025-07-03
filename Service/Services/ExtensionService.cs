@@ -4,9 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Repository.Entities;
 using Repository.Interfaces;
 using Repository.Repositories;
-using Service.Helpers;
 using Service.Interfaces;
-using Service.Search;
+using Service.Services.Helpers;
+using Service.Services.Search;
+using Service.Services.Table;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,8 @@ namespace Service.Services
 
             services.AddScoped<UserRepository>();
             services.AddScoped<IAdminService, AdminService>();
+
+            services.AddTransient<EmailService>();
 
             return services;
         }

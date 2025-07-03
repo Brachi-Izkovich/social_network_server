@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using Service.Services;
+using Service.Services.Table;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
