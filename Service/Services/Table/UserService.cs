@@ -34,22 +34,19 @@ namespace Service.Services.Table
 
             var addedUser = await repository.Add(newUser);
 
+            //string imageUrl = $"https://localhost:7147/Images/{addedUser.ImageProfileUrl}";
+            string imageUrl = $"https://localhost:7147/Images/FR__2328.JPG";
+
             await emailService.SendEmailAsync(
                 toEmail: addedUser.Email,
                 toName: addedUser.Name,
                 subject: "Welcome to Social Network!",
-                body: $"""
-               Hello {addedUser.Name},<br/>
-               Your account has been created.<br/>
-               <b>Username:</b> {addedUser.Name}<br/>
-               <b>Your Email:</b> {addedUser.Email}<br/>
-               <b>Your Password:</b> {user.Password}
-               """
+                password: user.Password,
+                imageUrl: imageUrl
             );
 
             return mapper.Map<UserDto>(addedUser);
         }
-
 
         public async Task Delete(int id)
         {
