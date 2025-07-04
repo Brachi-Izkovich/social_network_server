@@ -39,6 +39,8 @@ namespace Service.Services
             //services.AddScoped<ISearchService, SearchService>();
             services.AddScoped<ITopicService, TopicService>();
 
+            services.AddScoped<ISearchService,SearchService>();
+
             return services;
         }
     }

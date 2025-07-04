@@ -30,7 +30,7 @@ namespace Mock
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=BRACHIH-COMPUTE\\SQLDATABASE;database=SocialNetwork;trusted_connection=true;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("server=DESKTOP-FKDF8KP\\SQLSERVR;database=SocialNetwork;trusted_connection=true;TrustServerCertificate=True");
         }
 
     }

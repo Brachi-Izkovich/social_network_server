@@ -25,7 +25,7 @@ namespace Service.Services.Table
         {
             this.repository = repository;
             this.mapper = mapper;
-            httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
             _topicRepository = topicRepository;
         }
 

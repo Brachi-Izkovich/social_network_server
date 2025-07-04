@@ -37,6 +37,8 @@ namespace Service.Services
             CreateMap<User, UserForAdminDto>().ReverseMap();
             CreateMap<User, UserRegisterDto>().ReverseMap();
             CreateMap<User, UserLogin>().ReverseMap();
+            CreateMap<Message,SearchResultDto>().ReverseMap();
+            CreateMap<Topic,SearchResultDto>().ReverseMap();
         }
     }
 }

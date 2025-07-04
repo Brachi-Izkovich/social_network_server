@@ -8,11 +8,19 @@ namespace Common.Dto
 {
     public class SearchResultDto
     {
-        public string Type { get; set; } // "Topic" or "Message"
         public int Id { get; set; }
-        public string TitleOrContent { get; set; }
+        public string Title { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string AuthorName { get; set; }
+        public string AuthorName {  get; set; }
+        public int? MatchingMessageId { get; set; }
+        public string? MatchingMessageSnippet { get; set; }
+
+
+        //public string Type { get; set; } // "Topic" or "Message"
+        //public int Id { get; set; }
+        //public string TitleOrContent { get; set; }
+        //public DateTime CreatedAt { get; set; }
+        //public string AuthorName { get; set; }
     }
 
 }
