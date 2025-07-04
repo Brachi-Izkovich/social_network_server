@@ -24,14 +24,22 @@ namespace Service.Services
             Console.WriteLine(_settings.ApiSecret);
         }
 
-        public async Task SendEmailAsync(string toEmail, string toName, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string toName, string subject, string password, string imageUrl)
         {
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Emails", "WelcomeEmailTemplate.html");
+            var htmlBody = await File.ReadAllTextAsync(templatePath);
+
+            htmlBody = htmlBody.Replace("{{name}}", toName)
+                   .Replace("{{email}}", toEmail)
+                   .Replace("{{password}}", password)
+                   .Replace("{{imageUrl}}", imageUrl ?? "");
+
             MailjetClient client = new MailjetClient(_settings.ApiKey, _settings.ApiSecret);
             var request = new MailjetRequest { Resource = SendV31.Resource }
                 .Property(Send.Messages, new JArray {
                 new JObject {
                     {"From", new JObject {
-                        {"Email", "0264brachi@gmail.com"},  // כתובת מייל שאושרה ב-Mailjet
+                        {"Email", "0264brachi@gmail.com"}, 
                         {"Name", "Social Network"}
                     }},
                     {"To", new JArray {
@@ -41,8 +49,8 @@ namespace Service.Services
                         }
                     }},
                     {"Subject", subject},
-                    {"TextPart", body},
-                    {"HTMLPart", $"<h3>{body}</h3>"}
+                    {"TextPart", "Welcome to Social Network"},
+                    {"HTMLPart", htmlBody}
                 }
                 });
 
